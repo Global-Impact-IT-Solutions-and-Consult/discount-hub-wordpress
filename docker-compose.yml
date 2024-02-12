@@ -19,7 +19,7 @@ services:
   db:
     image: mysql
     environment:
-      MYSQL_DATABASE: giitsc
+      MYSQL_DATABASE: discount-hub
       MYSQL_PASSWORD: admin
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: admin
