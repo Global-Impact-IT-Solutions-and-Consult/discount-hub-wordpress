@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Your base production configuration goes in this file. Environment-specific
  * overrides go in their respective config/environments/{{WP_ENV}}.php file.
@@ -83,6 +84,13 @@ Config::define('DB_PASSWORD', env('DB_PASSWORD'));
 Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
 Config::define('DB_CHARSET', 'utf8mb4');
 Config::define('DB_COLLATE', '');
+
+//database certificate
+Config::define('MYSQL_SSL_CA', getenv('MYSQL_SSL_CA'));
+Config::define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL | MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
+Config::define('DB_SSL', true);
+
+
 $table_prefix = env('DB_PREFIX') ?: 'wp_';
 
 if (env('DATABASE_URL')) {
@@ -93,6 +101,10 @@ if (env('DATABASE_URL')) {
     Config::define('DB_PASSWORD', isset($dsn->pass) ? $dsn->pass : null);
     Config::define('DB_HOST', isset($dsn->port) ? "{$dsn->host}:{$dsn->port}" : $dsn->host);
 }
+
+//default theme
+define('WP_DEFAULT_THEME', 'discount-hub');
+define('CORE_UPGRADE_SKIP_NEW_BUNDLED', true);
 
 /**
  * Authentication Unique Keys and Salts
