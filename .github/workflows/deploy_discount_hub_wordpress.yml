@@ -1,0 +1,26 @@
+name: Deploy The Idea Bank Backend
+
+on:
+  push:
+    branches: [deploy]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy App
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DIGITAL_OCEAN_DISCOUNT_HUB_HOST }}
+          username: ${{ secrets.DIGITAL_OCEAN_DISCOUNT_HUB_USERNAME}}
+          key: ${{ secrets.DIGITAL_OCEAN_DISCOUNT_HUB_SSH_KEY }}
+          script: |
+            docker system prune --force
+            cd giitsc/discount-hub-wordpress
+            git checkout deploy
+            git pull
+            echo "${{ vars.ENVIROMENT_VARIABLES }}" > .env
+            docker compose down
+            docker compose up --build -d
+            exit
