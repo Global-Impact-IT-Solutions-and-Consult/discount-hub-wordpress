@@ -11,8 +11,10 @@ License:      MIT License
 */
 
 
+//create post types
 function create_posttype()
 {
+    //products
     register_post_type(
         'products',
         // CPT Options
@@ -29,6 +31,33 @@ function create_posttype()
             'taxonomies' => array('category', 'post_tag')
         )
     );
+
+    //shops
+    register_post_type(
+        'shops',
+        // CPT Options
+        array(
+            'labels' => array(
+                'name' => __('Shops'),
+                'singular_name' => __('Shop')
+            ),
+            'supports'            => array('title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields',),
+            'public' => true,
+            'has_archive' => true,
+            'show_in_rest' => true,
+            'rewrite' => array('slug' => 'shop'),
+            'taxonomies' => array('category')
+        )
+    );
 }
 // Hooking up our function to theme setup
 add_action('init', 'create_posttype');
+
+
+//enable cors
+add_action('rest_api_init', function () {
+    add_action('rest_pre_serve_request', function () {
+        header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Wpml-Language', true);
+        header("Access-Control-Allow-Origin: *");
+    });
+}, 15);
