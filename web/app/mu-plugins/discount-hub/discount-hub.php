@@ -73,3 +73,35 @@ add_action('rest_api_init', function () {
         header("Access-Control-Allow-Origin: *");
     });
 }, 15);
+
+function add_taxonomy()
+{
+    register_taxonomy(
+        'company',  // The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
+        'products',             // post type name
+        array(
+            'hierarchical' => true,
+            'label' => 'Product Company', // display name
+            'query_var' => true,
+            'rewrite' => array(
+                'slug' => 'company',    // This controls the base slug that will display before each term
+                'with_front' => false  // Don't display the category base before
+            )
+        )
+    );
+
+    register_taxonomy(
+        'discountTypes',  // The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
+        'products',             // post type name
+        array(
+            'hierarchical' => true,
+            'label' => 'Discount Types', // display name
+            'query_var' => true,
+            'rewrite' => array(
+                'slug' => 'discount-type',    // This controls the base slug that will display before each term
+                'with_front' => false  // Don't display the category base before
+            )
+        )
+    );
+}
+add_action('init', 'add_taxonomy');
