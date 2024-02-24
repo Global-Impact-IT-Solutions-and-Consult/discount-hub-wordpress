@@ -82,7 +82,11 @@ License:      MIT License
 function fetch_and_add_products_from_api() {
     // Your API endpoint URL
     // $api_url = 'http://0.0.0.0:5000/crawl';
-    $api_url = 'http://127.0.0.1:5000/crawl';
+    // $api_url = 'http://127.0.0.1:5000/crawl';
+    $api_url = 'http://host.docker.internal:5000/crawl';
+
+    // Set custom timeout value (in seconds)
+    $timeout = 60000; // Adjust the timeout value as needed
 
     // Make the request using wp_remote_get for a GET request
     $response = wp_remote_get( $api_url, array(
@@ -90,7 +94,10 @@ function fetch_and_add_products_from_api() {
         'headers'   => array(
             'Content-Type' => 'application/json',
         ),
+        'timeout'   => $timeout, // Set custom timeout value
     ) );
+
+    print($api_url);
 
     // Check if the request was successful
     if ( is_wp_error( $response ) ) {
