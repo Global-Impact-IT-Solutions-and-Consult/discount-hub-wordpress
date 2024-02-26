@@ -325,7 +325,7 @@ function add_taxonomy()
         'products',             // post type name
         array(
             'hierarchical' => true,
-            'label' => 'Product Company', // display name
+            'label' => 'Product Company', // display name.
             'query_var' => true,
             'rewrite' => array(
                 'slug' => 'company',    // This controls the base slug that will display before each term
