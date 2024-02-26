@@ -1,3 +1,9 @@
+
+
+
+
+
+
 <?php
 /*
 Plugin Name:  Discount Hub
@@ -165,10 +171,10 @@ function fetch_and_add_products_from_api() {
         $existing_post = get_page_by_title( $product->product_name, OBJECT, 'products' );
 
         // If the product already exists, delete it
-        // if ( $existing_post ) {
-        //     wp_delete_post( $existing_post->ID, true ); // Delete the post permanently
-        //     error_log( 'Deleted post' );
-        // }
+        if ( $existing_post ) {
+            wp_delete_post( $existing_post->ID, true ); // Delete the post permanently
+            error_log( 'Deleted post' );
+        }
 
         // Prepare post data
         $post_data = array(
@@ -226,33 +232,17 @@ function fetch_and_add_products_from_api() {
     }
 }
 
-// // Schedule the event to run daily at midnight
-// function schedule_daily_event() {
-//     if ( ! wp_next_scheduled( 'fetch_and_add_products_event' ) ) {
-//         // Schedule the event for the first time WordPress runs
-//         fetch_and_add_products_from_api();
-        
-//         // Schedule daily event for subsequent calls
-//         wp_schedule_event( strtotime( 'midnight' ), 'daily', 'fetch_and_add_products_event' );
-//     }
-// }
-// add_action( 'wp', 'schedule_daily_event' );
-
 // Schedule the event to run daily at midnight
 function schedule_daily_event() {
-    // Check if the event is already scheduled
     if ( ! wp_next_scheduled( 'fetch_and_add_products_event' ) ) {
         // Schedule the event for the first time WordPress runs
         fetch_and_add_products_from_api();
-
-        // Schedule the event to run daily
+        
+        // Schedule daily event for subsequent calls
         wp_schedule_event( strtotime( 'midnight' ), 'daily', 'fetch_and_add_products_event' );
     }
 }
-
-// Hook the scheduling function to the init action
-add_action( 'init', 'schedule_daily_event' );
-
+add_action( 'wp', 'schedule_daily_event' );
 
 //create post types
 function create_posttype()
