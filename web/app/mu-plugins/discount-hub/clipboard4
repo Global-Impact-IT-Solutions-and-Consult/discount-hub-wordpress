@@ -35,6 +35,7 @@ function delete_products_in_batches() {
 }
 // add_action( 'init', 'delete_products_in_batches' );
 
+
 function fetch_and_add_products_from_api() {
     // Your API endpoint URL
     $api_url = 'http://host.docker.internal:5000/crawl';
@@ -77,51 +78,65 @@ function fetch_and_add_products_from_api() {
 
     // Loop through each product
     foreach ( $products as $product ) {
-        $post_data = array(
-            'post_title'   => $product->product_name,
-            'post_content' => $product->product_details,
-            'post_status'  => 'publish',
-            'post_type'    => 'products',
-        );
+        // Check if the product already exists in WordPress
+        // $args = array(
+        //     'post_type'      => 'products',
+        //     'meta_key'       => 'product_name',
+        //     'meta_value'     => $product->product_name,
+        //     'posts_per_page' => 1, // We only need to check if the product exists, so limit the query to 1
+        // );
 
-        // Insert the post
-        $post_id = wp_insert_post( $post_data );
+        // $query = new WP_Query( $args );
 
-        if ( $post_id ) {
-            // Add meta data
-            update_post_meta( $post_id, 'product_name', $product->product_name );
-            update_post_meta( $post_id, 'company_name', $product->company_name );
-            update_post_meta( $post_id, 'discount_type', $product->discount_type );
-            update_post_meta( $post_id, 'discount_price', $product->discount_price );
-            update_post_meta( $post_id, 'normal_price', $product->normal_price );
-            update_post_meta( $post_id, 'discount_percentage', $product->discount_percentage );
-            update_post_meta( $post_id, 'product_url', $product->product_url );
-            update_post_meta( $post_id, 'product_image_url', $product->product_image_url );
-            update_post_meta( $post_id, 'all_product_image_urls', $product->all_product_image_urls );
-            update_post_meta( $post_id, 'parent_site_logo', $product->parent_site_logo );
-            update_post_meta( $post_id, 'crawled_from', $product->crawled_from );
-            update_post_meta( $post_id, 'specifications', $product->specifications );
-            update_post_meta( $post_id, 'key_features', $product->key_features );
-            update_post_meta( $post_id, 'star_rating', $product->star_rating );
-            update_post_meta( $post_id, 'items_left', $product->items_left );
-            update_post_meta( $post_id, 'verified_rating', $product->verified_rating );
-            update_post_meta( $post_id, 'product_details', $product->product_details );
+        // // If the product does not exist, add it to WordPress
+        // if ( ! $query->have_posts() ) {
+            // Prepare post data
+            $post_data = array(
+                'post_title'   => $product->product_name,
+                'post_content' => $product->product_details,
+                'post_status'  => 'publish',
+                'post_type'    => 'products',
+            );
 
-            // Set the discount type
-            $discount_type = isset( $product->discount_type ) ? $product->discount_type : '';
+            // Insert the post
+            $post_id = wp_insert_post( $post_data );
 
-            // Check if the discount type term exists, if not, create it
-            if ( ! term_exists( $discount_type, 'discount_type' ) ) {
-                wp_insert_term( $discount_type, 'discount_type' );
+            if ( $post_id ) {
+                // Add meta data
+                update_post_meta( $post_id, 'product_name', $product->product_name );
+                update_post_meta( $post_id, 'company_name', $product->company_name );
+                update_post_meta( $post_id, 'discount_type', $product->discount_type );
+                update_post_meta( $post_id, 'discount_price', $product->discount_price );
+                update_post_meta( $post_id, 'normal_price', $product->normal_price );
+                update_post_meta( $post_id, 'discount_percentage', $product->discount_percentage );
+                update_post_meta( $post_id, 'product_url', $product->product_url );
+                update_post_meta( $post_id, 'product_image_url', $product->product_image_url );
+                update_post_meta( $post_id, 'all_product_image_urls', $product->all_product_image_urls );
+                update_post_meta( $post_id, 'parent_site_logo', $product->parent_site_logo );
+                update_post_meta( $post_id, 'crawled_from', $product->crawled_from );
+                update_post_meta( $post_id, 'specifications', $product->specifications );
+                update_post_meta( $post_id, 'key_features', $product->key_features );
+                update_post_meta( $post_id, 'star_rating', $product->star_rating );
+                update_post_meta( $post_id, 'items_left', $product->items_left );
+                update_post_meta( $post_id, 'verified_rating', $product->verified_rating );
+                update_post_meta( $post_id, 'product_details', $product->product_details );
+
+                // Set the discount type
+                $discount_type = isset( $product->discount_type ) ? $product->discount_type : '';
+
+                // Check if the discount type term exists, if not, create it
+                if ( ! term_exists( $discount_type, 'discount_type' ) ) {
+                    wp_insert_term( $discount_type, 'discount_type' );
+                }
+
+                // Assign the product to the discount type
+                if ( $discount_type ) {
+                    wp_set_object_terms( $post_id, $discount_type, 'discount_type', true );
+                }
+
+                error_log( 'Adding Product: ' . $product->product_name ); 
             }
-
-            // Assign the product to the discount type
-            if ( $discount_type ) {
-                wp_set_object_terms( $post_id, $discount_type, 'discount_type', true );
-            }
-
-            error_log( 'Adding Product: ' . $product->product_name ); 
-        }
+        // }
     }
 }
 
